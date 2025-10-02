@@ -1,0 +1,38 @@
+{
+  "name": "orka",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "orka": "bin/orka",
+    "orka-mcp": "bin/orka-mcp"
+  },
+  "files": [
+    "build",
+    "bin"
+  ],
+  "scripts": {
+    "clean": "rimraf build",
+    "build": "tsc -p tsconfig.json && node -e \"require('fs').chmodSync('build/mcp/server.js', '755')\"",
+    "dev": "tsx watch src/mcp/server.ts",
+    "start": "node build/mcp/server.js",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
+    "fastmcp": "^3.18.0",
+    "openai": "^4.60.0",
+    "pino": "^9.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
+  }
+}
