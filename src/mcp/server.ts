@@ -7,6 +7,7 @@ import { createPlanGenerationTool } from "./tools/generatePlan.js";
 import { createPromptEnhancementTool } from "./tools/enhancePrompts.js";
 import { createOrchestrationTool } from "./tools/orchestratePlan.js";
 import { createTaskProgressUpdateTool } from "./tools/updateTaskProgress.js";
+import { createProjectOverviewTool } from "./tools/projectOverview.js";
 
 const server = new FastMCP({
     name: "orka",
@@ -20,6 +21,7 @@ const tools = [
     createPromptEnhancementTool(),
     createComponentPromptTool(),
     createTaskProgressUpdateTool(),
+    createProjectOverviewTool(),
 ];
 
 tools.forEach((tool) => server.addTool(tool));

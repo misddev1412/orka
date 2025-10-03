@@ -14,6 +14,7 @@ import {
     resolveStatePath,
     updateStateManifest,
 } from "../utils/sessionState.js";
+import { loadProjectBase, buildProjectBaseContext } from "../utils/projectBase.js";
 
 const toSessionIdentifiers = (
     prompt: string,
@@ -50,9 +51,15 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
             : path.resolve(process.cwd(), args.outputDirectory);
         const sessionDirectory = path.join(baseDirectory, sessionId);
 
+        const { base: projectBase, path: projectBasePath } = await loadProjectBase(baseDirectory);
+        const baseContext = buildProjectBaseContext(projectBase);
+        const contextParts = [baseContext.trim(), args.projectContext?.trim()]
+            .filter((value): value is string => Boolean(value && value.length > 0));
+        const combinedProjectContext = contextParts.length > 0 ? contextParts.join("\n\n") : undefined;
+
         const analysis = await analyzeRequirements({
             prompt: args.prompt,
-            projectContext: args.projectContext,
+            projectContext: combinedProjectContext,
             projectType: args.projectType,
             model: args.analysisModel,
         });
@@ -71,7 +78,7 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
 
         const enhancement = await enhanceTaskPrompts({
             tasks: normalisedPlan.tasks,
-            projectContext: args.projectContext,
+            projectContext: combinedProjectContext,
             model: args.enhancementModel,
             format: "markdown",
         });
@@ -141,6 +148,7 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 progress: progressPath,
                 manifest: manifestPath,
                 state: statePath,
+                projectBase: projectBasePath,
             },
         });
 
@@ -148,11 +156,15 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
             sessionId,
             createdAt,
             prompt: args.prompt,
-            projectContext: args.projectContext,
+            projectContext: combinedProjectContext,
             projectType: args.projectType,
             summary: normalisedPlan.summary,
             sequencingPrinciple: normalisedPlan.sequencingPrinciple,
             totals,
+            projectBase: {
+                path: projectBasePath,
+                context: baseContext,
+            },
             files: {
                 directory: sessionDirectory,
                 markdown: markdownPath,
@@ -160,6 +172,7 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 analysis: analysisPath,
                 progress: progressPath,
                 state: statePath,
+                projectBase: projectBasePath,
             },
         });
 
@@ -181,7 +194,9 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 progress: progressPath,
                 manifest: manifestPath,
                 state: statePath,
+                projectBase: projectBasePath,
             },
+            projectContext: combinedProjectContext,
         });
 
         return JSON.stringify(result, null, 2);

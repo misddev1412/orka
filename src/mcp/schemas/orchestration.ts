@@ -34,6 +34,7 @@ const fileReferenceSchema = z.object({
     progress: z.string(),
     manifest: z.string(),
     state: z.string().optional(),
+    projectBase: z.string().optional(),
 });
 
 export const sessionStateEntrySchema = z.object({
@@ -112,7 +113,9 @@ export const orchestrationResultSchema = z.object({
         progress: z.string(),
         manifest: z.string(),
         state: z.string(),
+        projectBase: z.string().optional(),
     }),
+    projectContext: z.string().optional(),
 });
 
 export type OrchestrationResult = z.infer<typeof orchestrationResultSchema>;
