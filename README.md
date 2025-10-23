@@ -68,17 +68,18 @@ In the examples below replace `</path/to/orka>` with the absolute path to your l
    - **Args**: leave empty (or `["--stdio"]` if Cursor requests it)
 4. Save the configuration, open a new chat tab, and confirm Orka appears in the MCP tool list.
 
-> Note: Some Cursor builds support manual configuration via `~/Library/Application Support/Cursor/mcpServers.json`. Add an entry similar to:
+> Note: Recent Cursor builds store MCP settings in JSON with a `mcpServers` map (for example `~/Library/Application Support/Cursor/User/globalStorage/mcp.json`). Ensure it contains an entry like:
 > ```json
 > {
->   "servers": [
->     {
->       "id": "orka",
->       "name": "Orka MCP",
->       "command": "/Users/<you>/RubymineProjects/orka/bin/orka-mcp",
->       "enabled": true
+>   "mcpServers": {
+>     "orka": {
+>       "command": "/Users/<you>/Projects/orka/bin/orka-mcp",
+>       "args": ["--stdio"],
+>       "env": {
+>         "OPENAI_API_KEY": "xxxxxxxx"
+>       }
 >     }
->   ]
+>   }
 > }
 > ```
 
