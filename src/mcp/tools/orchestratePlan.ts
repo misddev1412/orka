@@ -15,6 +15,7 @@ import {
     updateStateManifest,
 } from "../utils/sessionState.js";
 import { loadProjectBase, buildProjectBaseContext } from "../utils/projectBase.js";
+import { fetchContext7Insights } from "../../core/context/context7.js";
 
 const toSessionIdentifiers = (
     prompt: string,
@@ -55,6 +56,27 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
         const baseContext = buildProjectBaseContext(projectBase);
         const contextParts = [baseContext.trim(), args.projectContext?.trim()]
             .filter((value): value is string => Boolean(value && value.length > 0));
+
+        const techCandidates = [
+            ...(projectBase.options?.manualTechStack ?? []),
+            ...(projectBase.techStack ?? []),
+            ...(projectBase.languages?.map((item) => item.language) ?? []),
+        ];
+
+        const context7Result = await fetchContext7Insights(techCandidates, args.prompt);
+
+        const context7Summary = context7Result.insights
+            .map((insight) => {
+                const label = insight.projectTitle ?? insight.projectPath;
+                const freshness = insight.lastUpdate ? ` (last updated ${insight.lastUpdate})` : "";
+                return `Context7 • ${label}${freshness}:\n${insight.content}`;
+            })
+            .join("\n\n");
+
+        if (context7Summary) {
+            contextParts.push(context7Summary);
+        }
+
         const combinedProjectContext = contextParts.length > 0 ? contextParts.join("\n\n") : undefined;
 
         const analysis = await analyzeRequirements({
@@ -117,6 +139,14 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
             analysis,
         );
 
+        const context7Path = await writeJsonSafely(path.join(sessionDirectory, `${baseName}-context7.json`), {
+            fetchedAt: new Date().toISOString(),
+            prompt: args.prompt,
+            techCandidates,
+            insights: context7Result.insights,
+            warnings: context7Result.warnings,
+        });
+
         const progressPath = await writeJsonSafely(
             path.join(sessionDirectory, `${baseName}-progress.json`),
             {
@@ -149,6 +179,7 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 manifest: manifestPath,
                 state: statePath,
                 projectBase: projectBasePath,
+                context7: context7Path,
             },
         });
 
@@ -165,6 +196,11 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 path: projectBasePath,
                 context: baseContext,
             },
+            context7: {
+                file: context7Path,
+                insights: context7Result.insights,
+                warnings: context7Result.warnings,
+            },
             files: {
                 directory: sessionDirectory,
                 markdown: markdownPath,
@@ -173,6 +209,7 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 progress: progressPath,
                 state: statePath,
                 projectBase: projectBasePath,
+                context7: context7Path,
             },
         });
 
@@ -195,8 +232,10 @@ export const createOrchestrationTool = (): McpToolDefinition => ({
                 manifest: manifestPath,
                 state: statePath,
                 projectBase: projectBasePath,
+                context7: context7Path,
             },
             projectContext: combinedProjectContext,
+            context7: context7Result,
         });
 
         return JSON.stringify(result, null, 2);

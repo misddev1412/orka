@@ -1,6 +1,6 @@
 {
   "name": "orka",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "type": "module",
   "bin": {
     "orka": "bin/orka",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
     "commander": "^12.0.0",
+    "context7": "^1.0.3",
     "dotenv": "^16.4.5",
     "fastmcp": "^3.18.0",
     "openai": "^4.60.0",

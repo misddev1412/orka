@@ -11,7 +11,7 @@ import { createProjectOverviewTool } from "./tools/projectOverview.js";
 
 const server = new FastMCP({
     name: "orka",
-    version: "0.1.0",
+    version: "0.0.1",
 });
 
 const tools = [

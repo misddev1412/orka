@@ -39,6 +39,7 @@ export const taskUpdateResultSchema = z.object({
         markdown: z.string(),
         manifest: z.string(),
         state: z.string(),
+        context7: z.string().optional(),
     }),
 });
 

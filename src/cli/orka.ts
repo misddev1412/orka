@@ -119,7 +119,7 @@ const printTaskDetails = (session: SessionStateEntry): void => {
 };
 
 const program = new Command();
-program.name("orka").description("orka CLI").version("0.1.0");
+program.name("orka").description("orka CLI").version("0.0.1");
 
 program
     .command("hello")

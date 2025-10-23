@@ -191,6 +191,7 @@ export const createTaskProgressUpdateTool = (): McpToolDefinition => ({
                 markdown: sessionEntry.files.markdown,
                 manifest: sessionEntry.files.manifest,
                 state: statePath,
+                context7: sessionEntry.files.context7,
             },
         });
 

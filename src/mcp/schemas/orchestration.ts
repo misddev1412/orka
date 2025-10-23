@@ -4,6 +4,22 @@ import { requirementAnalysisSchema } from "./analysis.js";
 import { planSchema } from "./planning.js";
 import { enhancedPlanSchema } from "./promptEnhancement.js";
 
+const context7InsightSchema = z.object({
+    projectPath: z.string(),
+    projectTitle: z.string().optional(),
+    topic: z.string(),
+    content: z.string(),
+    sourceUrl: z.string(),
+    lastUpdate: z.string().optional(),
+});
+
+export const context7ResultSchema = z.object({
+    insights: z.array(context7InsightSchema),
+    warnings: z.array(z.string()),
+});
+
+export type Context7Result = z.infer<typeof context7ResultSchema>;
+
 export const taskProgressSchema = z.object({
     id: z.string(),
     title: z.string(),
@@ -35,6 +51,7 @@ const fileReferenceSchema = z.object({
     manifest: z.string(),
     state: z.string().optional(),
     projectBase: z.string().optional(),
+    context7: z.string().optional(),
 });
 
 export const sessionStateEntrySchema = z.object({
@@ -114,8 +131,10 @@ export const orchestrationResultSchema = z.object({
         manifest: z.string(),
         state: z.string(),
         projectBase: z.string().optional(),
+        context7: z.string().optional(),
     }),
     projectContext: z.string().optional(),
+    context7: context7ResultSchema.optional(),
 });
 
 export type OrchestrationResult = z.infer<typeof orchestrationResultSchema>;
