@@ -39,6 +39,23 @@ OPENAI_MAX_TOKENS=4000
 
 Make sure you reference the absolute path to `bin/orka-mcp` when registering the server with an IDE or client.
 
+### Installing the Orka CLI Globally
+1. Build the project so the compiled CLI is available:
+   ```bash
+   npm run build
+   ```
+2. From the repository root install the package globally (this runs `prepare` and links the `orka` binary):
+   ```bash
+   npm install -g .
+   ```
+3. Verify the installation and inspect the task state stored in `.orka/state.json` for the project you are working in:
+   ```bash
+   orka hello
+   orka status
+   ```
+
+> Re-run `npm install -g .` after pulling new changes to refresh the global binary. Uninstall with `npm uninstall -g orka` if you no longer need the CLI.
+
 ## Integrating with IDEs / MCP Clients
 In the examples below replace `</path/to/orka>` with the absolute path to your local project directory. You can obtain it with `pwd` after navigating into the repo.
 
@@ -123,4 +140,3 @@ npm install
 npm run build
 ```
 Restart your IDE/client so it reloads the freshly built server.
-
